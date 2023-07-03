@@ -165,11 +165,37 @@ static uint16_t telemetry_interval() {
 
 static bool tlm_device_info_pending = false;
 
-static packet_status_t rx_serial_crsf_process_frame(uint8_t frame_length) {
+static packet_status_t rx_serial_crsf_process_frame(uint8_t const frame_length) {
   bool channels_received = false;
 
   switch (rx_data[0]) {
   case CRSF_FRAMETYPE_RC_CHANNELS_PACKED: {
+    if (frame_length == (sizeof(elrs_channels_t) + 2)) {
+      // Packed version for faster transmission time
+      const elrs_channels_t * const p_rc = (elrs_channels_t *)&rx_data[1];
+
+      // AETR channel order
+      const float rc_channels[4] = {
+        (p_rc->ch0 - 2048) * 0.00048875855f,
+        (p_rc->ch1 - 2048) * 0.00048875855f,
+        (p_rc->ch2 - 2048) * 0.00048875855f,
+        (p_rc->ch3 - 2048) * 0.00048875855f,
+      };
+      rx_map_channels(rc_channels);
+
+      state.aux[AUX_CHANNEL_0] = !!p_rc->ch4;
+      state.aux[AUX_CHANNEL_1] = !!p_rc->ch5;
+      state.aux[AUX_CHANNEL_2] = !!p_rc->ch6;
+      state.aux[AUX_CHANNEL_3] = !!p_rc->ch7;
+      state.aux[AUX_CHANNEL_4] = !!p_rc->ch8;
+      state.aux[AUX_CHANNEL_5] = !!p_rc->ch9;
+      state.aux[AUX_CHANNEL_6] = !!p_rc->ch10;
+      state.aux[AUX_CHANNEL_7] = !!p_rc->ch11;
+
+      channels_received = true;
+      break;
+    }
+
     const crsf_channels_t *chan = (crsf_channels_t *)&rx_data[1];
     channels[0] = chan->chan0;
     channels[1] = chan->chan1;
@@ -221,6 +247,17 @@ static packet_status_t rx_serial_crsf_process_frame(uint8_t frame_length) {
 
   case CRSF_FRAMETYPE_LINK_STATISTICS: {
     const crsf_stats_t *stats = (crsf_stats_t *)&rx_data[1];
+
+    crsf_rf_mode = stats->rf_mode;
+
+    if (profile.receiver.lqi_source == RX_LQI_SOURCE_DIRECT) {
+      rx_lqi_update_direct(stats->uplink_link_quality);
+    }
+    break;
+  }
+
+  case CRSF_FRAMETYPE_LINK_STATISTICS_ELRS: {
+    const elrs_stats_t *stats = (elrs_stats_t *)&rx_data[1];
 
     crsf_rf_mode = stats->rf_mode;
 

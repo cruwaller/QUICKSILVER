@@ -58,6 +58,7 @@ typedef enum {
   CRSF_FRAMETYPE_GPS = 0x02,
   CRSF_FRAMETYPE_BATTERY_SENSOR = 0x08,
   CRSF_FRAMETYPE_LINK_STATISTICS = 0x14,
+  CRSF_FRAMETYPE_LINK_STATISTICS_ELRS = 0x15,
   CRSF_FRAMETYPE_RC_CHANNELS_PACKED = 0x16,
   CRSF_FRAMETYPE_ATTITUDE = 0x1E,
   CRSF_FRAMETYPE_FLIGHT_MODE = 0x21,
@@ -116,6 +117,30 @@ typedef struct {
   uint8_t downlink_link_quality;
   int8_t downlink_snr;
 } crsf_stats_t;
+
+typedef struct {
+  // 72 bits of data (4 x 12 bits + 8 x 3 bits channels) = 9 bytes.
+  unsigned int ch0 : 12;
+  unsigned int ch1 : 12;
+  unsigned int ch2 : 12;
+  unsigned int ch3 : 12;
+  unsigned int ch4 : 3;
+  unsigned int ch5 : 3;
+  unsigned int ch6 : 3;
+  unsigned int ch7 : 3;
+  unsigned int ch8 : 3;
+  unsigned int ch9 : 3;
+  unsigned int ch10 : 3;
+  unsigned int ch11 : 3;
+} __attribute__((__packed__)) elrs_channels_t;
+
+// Compact version of uplink link statistics
+typedef struct {
+  uint8_t uplink_rssi;
+  uint8_t uplink_link_quality;
+  int8_t  uplink_snr;
+  uint8_t rf_mode;
+} elrs_stats_t;
 
 typedef struct {
   uint8_t device_address;

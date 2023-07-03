@@ -62,7 +62,20 @@ void serial_rx_init(rx_serial_protocol_t proto) {
     break;
 
   case RX_SERIAL_PROTOCOL_CRSF:
+#if defined(RX_CRSF_BAUDRATE)
+    config.baudrate = RX_CRSF_BAUDRATE;
+#else
     config.baudrate = 420000;
+#endif
+    config.stop_bits = SERIAL_STOP_BITS_1;
+    config.direction = SERIAL_DIR_TX_RX;
+    break;
+
+  case RX_SERIAL_PROTOCOL_CRSF_FAST:
+#if !defined(RX_CRSF_BAUDRATE_FAST)
+#define RX_CRSF_BAUDRATE_FAST 1000000
+#endif
+    config.baudrate = RX_CRSF_BAUDRATE_FAST;
     config.stop_bits = SERIAL_STOP_BITS_1;
     config.direction = SERIAL_DIR_TX_RX;
     break;

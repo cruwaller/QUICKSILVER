@@ -48,6 +48,7 @@ static float rx_serial_expected_fps() {
     return (1000.0f / 7.0f);
 
   case RX_SERIAL_PROTOCOL_CRSF:
+  case RX_SERIAL_PROTOCOL_CRSF_FAST:
     return rx_serial_crsf_expected_fps();
 
   case RX_SERIAL_PROTOCOL_REDPINE:
@@ -71,6 +72,7 @@ static packet_status_t rx_serial_process(rx_serial_protocol_t proto) {
   case RX_SERIAL_PROTOCOL_FPORT_INVERTED:
     return rx_serial_process_fport();
   case RX_SERIAL_PROTOCOL_CRSF:
+  case RX_SERIAL_PROTOCOL_CRSF_FAST:
     return rx_serial_process_crsf();
   case RX_SERIAL_PROTOCOL_REDPINE:
   case RX_SERIAL_PROTOCOL_REDPINE_INVERTED:
@@ -184,6 +186,7 @@ bool rx_serial_check() {
       rx_serial_send_fport_telemetry();
       break;
     case RX_SERIAL_PROTOCOL_CRSF:
+    case RX_SERIAL_PROTOCOL_CRSF_FAST:
       rx_serial_send_crsf_telemetry();
       break;
 

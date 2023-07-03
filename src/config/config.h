@@ -100,6 +100,10 @@
 // *************ELRS Specific Settings
 // #define EXPRESS_LRS_UID 0, 0, 0, 0, 0, 0
 
+// *************Custom baudrate for CRSF RX serial
+// #define RX_CRSF_BAUDRATE 420000
+// #define RX_CRSF_BAUDRATE_FAST 1000000
+
 // *******************************SWITCH SELECTION*****************************
 #define ARMING AUX_CHANNEL_0
 #define PREARM AUX_CHANNEL_ON
