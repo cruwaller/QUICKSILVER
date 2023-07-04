@@ -88,7 +88,7 @@ void looptime_update() {
 
   looptime_auto_detect();
 
-  state.uptime += state.looptime;
+  state.uptime_ms += state.looptime_us * 0.001;
   if (flags.arm_state) {
     state.armtime += state.looptime;
   }

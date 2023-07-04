@@ -47,7 +47,7 @@ typedef struct {
   float looptime;        // looptime in seconds
   uint32_t looptime_us;  // looptime in us
   uint32_t loop_counter; // number of loops ran
-  float uptime;          // running sum of looptimes
+  float uptime_ms;       // running sum of looptimes
   float armtime;         // running sum of looptimes (while armed)
   uint32_t cpu_load;     // micros we have had left last loop
 
@@ -110,7 +110,7 @@ typedef struct {
   MEMBER(looptime_autodetect, uint16)       \
   MEMBER(looptime, float)                   \
   MEMBER(looptime_us, uint32)               \
-  MEMBER(uptime, float)                     \
+  MEMBER(uptime_ms, float)                  \
   MEMBER(armtime, float)                    \
   MEMBER(cpu_load, uint32)                  \
   MEMBER(lipo_cell_count, uint8)            \

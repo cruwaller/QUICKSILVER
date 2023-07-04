@@ -331,25 +331,28 @@ static void print_osd_rssi(osd_element_t *el) {
 }
 
 static void print_osd_armtime(osd_element_t *el) {
-  uint32_t time_s = state.armtime;
+  uint32_t time_s = state.uptime_ms / 10; //state.armtime;
 
-  // Will only display up to 59:59 as realistically no quad will fly that long (currently).
+  // Will only display up to 59:59.99 as realistically no quad will fly that long (currently).
   // Reset to zero at on reaching 1 hr
-  while (time_s >= 3600) {
-    time_s -= 3600;
+  while (time_s >= 360000) {
+    time_s -= 360000;
   }
 
-  osd_start(osd_attr(el), el->pos_x, el->pos_y);
+  uint32_t seconds = time_s / 100;
+  uint32_t const milliseconds = time_s % 100;
+  uint32_t const minutes = seconds / 60;
+  seconds -= (minutes * 60);
 
-  const uint32_t minutes = time_s / 60;
+  osd_start(osd_attr(el), el->pos_x, el->pos_y);
   osd_write_uint(minutes / 10, 1);
   osd_write_uint(minutes % 10, 1);
-
   osd_write_char(':');
-
-  const uint32_t seconds = time_s % 60;
   osd_write_uint(seconds / 10, 1);
   osd_write_uint(seconds % 10, 1);
+  osd_write_char('.');
+  osd_write_uint(milliseconds / 10, 1);
+  osd_write_uint(milliseconds % 10, 1);
 }
 
 // print the current vtx settings as Band:Channel:Power
