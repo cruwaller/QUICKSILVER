@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include "core/debug.h"
 #include "core/flash.h"
 #include "core/looptime.h"
 #include "driver/motor.h"
@@ -329,6 +330,7 @@ static void msp_process_serial_cmd(msp_t *msp, msp_magic_t magic, uint16_t cmd, 
       settings->band = channel_index / VTX_CHANNEL_MAX;
       settings->channel = channel_index % VTX_CHANNEL_MAX;
     }
+    quic_debugf("MSP_SET_VTX_CONFIG: freq:%u, band:%u, ch:%u", freq, settings->band, settings->channel);
 
     if (remaining >= 2) {
       settings->power_level = max(payload[2], 1) - 1;
